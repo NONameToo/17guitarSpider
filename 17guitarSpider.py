@@ -1,5 +1,7 @@
 # coding:utf-8
 
+# 此爬虫采用单线程的方式,速度相对比较慢,可以改为多线程的方式提高速度,有空我改改代码
+
 import urllib.request as u2
 from lxml import etree
 import os
@@ -17,7 +19,7 @@ class Spider_guitar(object):
         """负责调度"""
         start = int(input('请输入起始页:'))
         stop = int(input('请输入结束页:'))
-        for p in range(start,stop+1):
+        for p in range(start, stop+1):
             self.page = p
             self.loadpage()
             print('当前爬取到:%d页'%self.page)
@@ -25,24 +27,17 @@ class Spider_guitar(object):
 
 
     def loadpage(self):
-
-
         # 构造完整的url
         url = self.url + str(self.page)
 
-        
         # 构造请求对象
         request = u2.Request(url, headers=self.headers)
 
         # 发送请求
         response = u2.urlopen(request)
-
         html = response.read().decode('gbk')
         #print(html)
-        
         self.dealpage(html)
-
-
 
     def dealpage(self, html):
         """解析吉他谱的名字和详细url"""
@@ -66,7 +61,6 @@ class Spider_guitar(object):
             print(url)
 
             #构造请求对象
-
             request = u2.Request(url, headers=self.headers)
 
             # 发送请求
@@ -85,8 +79,6 @@ class Spider_guitar(object):
             # 解析名字
             pic_name = content.xpath('//h1')
             #print(pic_name)
-
-
             # 获取当前工作路径
             now_path = os.getcwd()
             # 判断目录是否已经存在
@@ -99,7 +91,6 @@ class Spider_guitar(object):
                     #print(url)
 
                     #构造请求对象
-
                     request = u2.Request(url, headers=self.headers)
 
                     # 发送请求
@@ -111,7 +102,6 @@ class Spider_guitar(object):
                     """解析吉他谱的图片地址"""
                     # 把HTML转换成html dom模型
                     content = etree.HTML(html2)
-                    
                     # 解析吉他谱图片地址
                     pic_list = content.xpath('//td[@id="article_contents"]//img/@src')
                     #print(pic_list)
@@ -122,8 +112,6 @@ class Spider_guitar(object):
                 except Exception  as e :
                     print(e)
                     continue
-
-
 
             file_name = pic_name[0].text
             #print(file_name)
@@ -147,7 +135,6 @@ class Spider_guitar(object):
                 #读取数据
                 pic_content = response.read()
                 #print(pic_content)
-                
 
                 # 把图片保存到本地
                 name = now_path+"/"+file_name+"/"+file_name + str(i)
@@ -158,19 +145,9 @@ class Spider_guitar(object):
                 with open(name, 'wb') as f:
                     f.write(pic_content)
                 i += 1
-                        
-
-
-
-        
-
-
-
-
 
 if __name__ == "__main__":
    spider_guitar = Spider_guitar()
-
    spider_guitar.spider()
 
 
